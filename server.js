@@ -1,9 +1,9 @@
 // Dependencies for server
 const express = require('express');
 const app = express();
-const userRoutes = require('./routes/userRoutes');
-const thoughtRoutes = require('./routes/thoughtRoutes');
-const reactionRoutes = require('./routes/reactionRoutes');
+const userRoutes = require('./routes/api/userRoutes');
+const thoughtRoutes = require('./routes/api/thoughtRoutes');
+const reactionRoutes = require('./routes//api/reactionRoutes');
 
 // Middleware setup
 app.use(express.json());
