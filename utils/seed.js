@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { User, Thought } = require('../models');
 
 // Connect to the database
-mongoose.connect('mongodb://localhost:27017/social-network-api', {
+mongoose.connect('mongodb://127.0.0.1:27017/social-network-api', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
