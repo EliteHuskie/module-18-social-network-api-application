@@ -1,4 +1,5 @@
 // Dependencies for MongoDB
+const mongoose = require('mongoose'); // Import mongoose library
 const User = require('../models/User');
 const Thought = require('../models/Thought');
 
@@ -51,24 +52,26 @@ module.exports = {
     }
   },
 // Delete User
-  deleteUser: async (req, res) => {
-    try {
-      const userId = req.params.userId;
+deleteUser: async (req, res) => {
+  try {
+    const userId = req.params.userId;
 
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      await Thought.deleteMany({ user: userId });
-
-      await user.remove();
-
-      res.status(200).json({ message: 'User and associated thoughts deleted' });
-    } catch (error) {
-      res.status(500).json({ message: 'Error deleting user', error: error.message });
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  },
+
+    // Delete thoughts associated with the user using deleteMany
+    await Thought.deleteMany({ user: userId });
+
+    // Delete the user using deleteOne
+    await User.deleteOne({ _id: userId });
+
+    res.status(200).json({ message: 'User and associated thoughts deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting user', error: error.message });
+  }
+},
 // Add Friend to User
 addFriend: async (req, res) => {
   try {
@@ -109,18 +112,27 @@ removeFriend: async (req, res) => {
       return res.status(404).json({ message: 'User or friend not found' });
     }
 
-    if (!user.friends.includes(friendId)) {
+    if (!user.friends.includes(friendId) || !friend.friends.includes(userId)) {
       return res.status(400).json({ message: 'User is not friends with this user' });
     }
 
-    user.friends = user.friends.filter((id) => id !== friendId);
-    friend.friends = friend.friends.filter((id) => id !== userId);
+    console.log('Before removal - user.friends:', user.friends);
+    console.log('Before removal - friend.friends:', friend.friends);
 
+    // Remove the friend ID from both users' friends lists
+    user.friends = user.friends.filter((id) => id.toString() !== friendId.toString());
+    friend.friends = friend.friends.filter((id) => id.toString() !== userId.toString());
+
+    console.log('After removal - user.friends:', user.friends);
+    console.log('After removal - friend.friends:', friend.friends);
+
+    // Save both user and friend documents
     await user.save();
     await friend.save();
 
     res.status(200).json({ message: 'Friend removed successfully' });
   } catch (error) {
+    console.error('Error removing friend:', error);
     res.status(500).json({ message: 'Error removing friend', error: error.message });
   }
 },
