@@ -53,24 +53,23 @@ module.exports = {
     }
   },
 // Delete Thought
-  deleteThought: async (req, res) => {
-    try {
-      const thoughtId = req.params.thoughtId;
+deleteThought: async (req, res) => {
+  try {
+    const thoughtId = req.params.thoughtId;
 
-      const thought = await Thought.findById(thoughtId);
-      if (!thought) {
-        return res.status(404).json({ message: 'Thought not found' });
-      }
-
-      await Reaction.deleteMany({ _id: { $in: thought.reactions } });
-
-      await thought.remove();
-
-      res.status(200).json({ message: 'Thought and associated reactions deleted' });
-    } catch (error) {
-      res.status(500).json({ message: 'Error deleting thought', error: error.message });
+    const thought = await Thought.findById(thoughtId);
+    if (!thought) {
+      return res.status(404).json({ message: 'Thought not found' });
     }
-  },
+
+    // Delete the thought using deleteOne
+    await Thought.deleteOne({ _id: thoughtId });
+
+    res.status(200).json({ message: 'Thought deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting thought', error: error.message });
+  }
+},
 // Add Reaction to Thought
    addReaction: async (req, res) => {
     try {
