@@ -71,4 +71,57 @@ module.exports = {
       res.status(500).json({ message: 'Error deleting thought', error: error.message });
     }
   },
+// Add Reaction to Thought
+   addReaction: async (req, res) => {
+    try {
+      const { thoughtId } = req.params;
+      const { reactionBody, username } = req.body;
+
+      const thought = await Thought.findById(thoughtId);
+
+      if (!thought) {
+        return res.status(404).json({ message: 'Thought not found' });
+      }
+
+      const newReaction = new Reaction({ reactionBody, username });
+      await newReaction.save();
+
+      thought.reactions.push(newReaction._id);
+      await thought.save();
+
+      res.status(201).json(newReaction);
+    } catch (error) {
+      res.status(400).json({ message: 'Error adding reaction', error: error.message });
+    }
+  },
+
+// Remove Reaction from Thought
+  removeReaction: async (req, res) => {
+    try {
+      const { thoughtId, reactionId } = req.params;
+
+      const thought = await Thought.findById(thoughtId);
+
+      if (!thought) {
+        return res.status(404).json({ message: 'Thought not found' });
+      }
+
+      const reactionIndex = thought.reactions.findIndex(
+        (reaction) => reaction._id.toString() === reactionId
+      );
+
+      if (reactionIndex === -1) {
+        return res.status(404).json({ message: 'Reaction not found' });
+      }
+
+      thought.reactions.splice(reactionIndex, 1);
+      await Reaction.findByIdAndDelete(reactionId);
+
+      await thought.save();
+
+      res.status(200).json({ message: 'Reaction removed' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error removing reaction', error: error.message });
+    }
+  },
 };
