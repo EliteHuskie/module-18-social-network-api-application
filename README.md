@@ -18,23 +18,35 @@
 
 ## Description
 
-Social Network API
+Social Network API application that allows Users, Thoughts and Reactions.
 
 ## Usage
 
-N/A
+Using this application entails creation, updating and deleting of Users, Thoughts, Reactions and even Friends through HTTP requests.
+
+Demo Video: https://drive.google.com/file/d/1eN4PyOjuWJoYhRkHryXmwAukZfOuMOcN/view
+
+![Social Network API](./public/images/social-network-api-1.png)
 
 ## Installation
 
-N/A
+Clone repository
+
+'npm install' to install any needed packages
+
+'node server.js' to run the server (will create the database in MongoDB if it doesn't exist)
+
+'npm run seed' to seed the database with sample/test data if needed
+
+Insomnia can be used to run the HTTP requests (GET, POST, PUT and DELETE)
 
 ## Contributing
 
-N/A
+Not applicable at this time
 
 ## Tests
 
-N/A
+Use Insomnia or a similiar application once server is running to test creating, updating and deleting of Users, Thoughts, Reactions and Friends
 
 ## License
 
