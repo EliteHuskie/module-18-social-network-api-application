@@ -1,6 +1,6 @@
 // Dependencies for MongoDB
 const mongoose = require('mongoose');
-const { User, Thought, Reaction } = require('./models');
+const { User, Thought } = require('../models');
 
 // Connect to the database
 mongoose.connect('mongodb://localhost:27017/social-network-api', {
@@ -14,7 +14,7 @@ mongoose.connect('mongodb://localhost:27017/social-network-api', {
   console.error('Error connecting to MongoDB:', err);
 });
 
-// Seed data for database (Users, Thoughts and Reactions)
+// Seed data for database (Users and Thoughts)
 const seedData = {
   users: [
     {
@@ -33,31 +33,19 @@ const seedData = {
       friends: [],
     },
     {
-        username: 'nikki.vigneault',
-        email: 'nikki@seeds.com',
-        friends: [],
-      },
+      username: 'nikki.vigneault',
+      email: 'nikki@seeds.com',
+      friends: [],
+    },
   ],
   thoughts: [
     {
       thoughtText: 'Hi, this is thought 1.',
       user: '',
-      reactions: [],
     },
     {
       thoughtText: 'Hello, this is thought 2.',
       user: '',
-      reactions: [],
-    },
-  ],
-  reactions: [
-    {
-      reactionBody: 'Wow, this is a reaction to thought 1.',
-      user: '', 
-    },
-    {
-      reactionBody: 'Fantastic, this is a reaction to thought 2.',
-      user: '', 
     },
   ],
 };
@@ -71,13 +59,7 @@ async function seedDatabase() {
       thought.user = createdUsers[index % createdUsers.length]._id;
     });
     
-    const createdThoughts = await Thought.insertMany(seedData.thoughts);
-    
-    seedData.reactions.forEach((reaction, index) => {
-      reaction.user = createdUsers[index % createdUsers.length]._id;
-    });
-    
-    await Reaction.insertMany(seedData.reactions);
+    await Thought.insertMany(seedData.thoughts);
 
     console.log('Seed data inserted successfully.');
   } catch (error) {
